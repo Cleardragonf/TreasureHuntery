@@ -1,0 +1,25 @@
+{
+    "startClueId": "clue1",
+    "clues": [
+        {
+            "id": "clue1",
+            "name": "Park Entrance",
+            "lat": 37.7749,
+            "lng": -122.4194,
+            "radiusMeters": 150,
+            "imagePath": "assets/clues/clue1.jpg",
+            "hint": "Great job! Head to the fountain.",
+            "nextClueId": "clue2"
+        },
+        {
+            "id": "clue2",
+            "name": "Central Fountain",
+            "lat": 37.7756,
+            "lng": -122.4183,
+            "radiusMeters": 120,
+            "imagePath": "assets/clues/clue2.jpg",
+            "hint": "Nice! Find the tallest tree.",
+            "nextClueId": null
+        }
+    ]
+}

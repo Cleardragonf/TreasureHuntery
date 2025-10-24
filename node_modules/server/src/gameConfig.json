@@ -1,0 +1,59 @@
+{
+  "startClueId": "clue1",
+  "clues": [
+    {
+      "id": "clue1",
+      "name": "Park Entrance",
+      "lat": 41.256645906604994,
+      "lng": -95.95254203364536,
+      "radiusMeters": 5664,
+      "imagePath": "assets/clues/clue1.jpg",
+      "hint": "Great job! Head to the fountain.",
+      "nextClueId": "clue2",
+      "requirePhoto": false,
+      "requireQA": true,
+      "question": "What is an Aflac?",
+      "expectedAnswer": "Duck",
+      "hints": [
+        "MMM I don't think I will",
+        "Why don't you make me",
+        "NOPE"
+      ],
+      "hintsPhoto": [
+        "Sorry This isn't the right photo",
+        "NO one can see you",
+        ""
+      ],
+      "hintsAnswer": [
+        "I Can Fly",
+        "I can Swim",
+        "I Quack"
+      ]
+    },
+    {
+      "id": "clue2",
+      "name": "Central Fountain",
+      "lat": 37.7756,
+      "lng": -122.4183,
+      "radiusMeters": 120,
+      "imagePath": "assets/clues/clue2.jpg",
+      "hint": "Nice! Find the tallest tree.",
+      "nextClueId": "clue3"
+    },
+    {
+      "id": "clue3",
+      "name": "What's Up",
+      "lat": 40.29761038786081,
+      "lng": 0,
+      "radiusMeters": 9266,
+      "imagePath": "assets/clues/clue3.jpg",
+      "hint": ""
+    }
+  ],
+  "wrongImageTips": [
+    "BAD CHILD!"
+  ],
+  "wrongAnswerTips": [
+    "ARE YOU SERIOUS!!!"
+  ]
+}

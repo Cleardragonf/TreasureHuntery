@@ -1,0 +1,23 @@
+{
+  "name": "treasure-hunt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently -n server,client -c blue,green \"npm --workspace apps/server run dev\" \"npm --workspace apps/client run dev\"",
+    "build": "npm --workspace apps/server run build && npm --workspace apps/client run build",
+    "start": "npm --workspace apps/server run start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
