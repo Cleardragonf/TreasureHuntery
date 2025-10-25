@@ -4,11 +4,14 @@ import MapAllEditor from '@/components/MapAllEditor';
 import {
   Box, Paper, Typography, Stack, Button, Tabs, Tab, TextField, Select, MenuItem,
   FormControl, InputLabel, IconButton, Dialog, DialogTitle, DialogContent, DialogActions,
-  Divider, List, ListItem, ListItemText, Snackbar, Alert
+  Divider, List, ListItem, ListItemText, Snackbar, Alert,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary
 } from '@mui/material';
-import Grid from '@mui/material/Grid';
 import RoomIcon from '@mui/icons-material/Room';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 type Clue = {
   id: string;
@@ -147,7 +150,7 @@ export default function AdminMUIPage() {
         <Typography>Loading config…</Typography>
       </Paper>
     ) : (
-    <Paper sx={{ p: 2 }}>
+    <Paper elevation={5} sx={{ p: 2 }}>
       <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between">
         <Typography variant="h6">Admin</Typography>
         <TextField size="small" label="Admin token" value={token} onChange={e => setToken(e.target.value)} />
@@ -174,27 +177,41 @@ export default function AdminMUIPage() {
             </Box>
           </Stack>
 
-          <Grid container spacing={2}>
+          <Stack spacing={2}>
             {filteredClues.map((c) => (
-              <Grid item xs={12} md={6} key={c.id}>
-                <Paper sx={{ p: 2, height: '100%' }}>
-                  <Stack direction="row" alignItems="center" justifyContent="space-between">
-                    <Typography variant="subtitle1">{c.id}</Typography>
-                    <Stack direction="row" spacing={1}>
-                      <IconButton color="primary" title="Edit location" onClick={() => setMapClueId(c.id)}><RoomIcon /></IconButton>
-                      <Button variant="contained" onClick={() => updateClue(c)} disabled={busy}>Save</Button>
-                      <Button variant="outlined" color="error" onClick={() => deleteClue(c.id)} disabled={busy}>Delete</Button>
-                    </Stack>
+              <Paper elevation={10} key={c.id} sx={{ p: 2 }} >
+                <Stack direction="row" alignItems="center" justifyContent="space-between">
+                  <Typography variant="subtitle1">{c.id}</Typography>
+                  <Stack direction="row" spacing={1}>
+                    <IconButton color="primary" title="Edit location" onClick={() => setMapClueId(c.id)}><RoomIcon /></IconButton>
+                    <Button variant="contained" onClick={() => updateClue(c)} disabled={busy}>Save</Button>
+                    <Button variant="outlined" color="error" onClick={() => deleteClue(c.id)} disabled={busy}>Delete</Button>
                   </Stack>
-                  <Grid container spacing={2} sx={{ mt: 1 }}>
-                  <Grid item xs={12} md={6}><TextField fullWidth size="small" label="Name" value={c.name} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, name: e.target.value}:x) }))} /></Grid>
-                  <Grid item xs={12} md={6}><TextField fullWidth size="small" label="Next" value={c.nextClueId ?? ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, nextClueId: e.target.value || null}:x) }))} /></Grid>
-                  <Grid item xs={12} md={4}><TextField fullWidth size="small" type="number" label="Lat" value={c.lat} error={c.lat < -90 || c.lat > 90} helperText={(c.lat < -90 || c.lat > 90) ? 'Lat must be between -90 and 90' : ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, lat: Number(e.target.value)}:x) }))} /></Grid>
-                  <Grid item xs={12} md={4}><TextField fullWidth size="small" type="number" label="Lng" value={c.lng} error={c.lng < -180 || c.lng > 180} helperText={(c.lng < -180 || c.lng > 180) ? 'Lng must be between -180 and 180' : ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, lng: Number(e.target.value)}:x) }))} /></Grid>
-                  <Grid item xs={12} md={4}><TextField fullWidth size="small" type="number" label="Radius (m)" value={c.radiusMeters} error={c.radiusMeters <= 0} helperText={c.radiusMeters <= 0 ? 'Radius must be > 0' : ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, radiusMeters: Number(e.target.value)}:x) }))} /></Grid>
-                  <Grid item xs={12}><TextField fullWidth size="small" label="Success Message" value={c.hint} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, hint: e.target.value}:x) }))} /></Grid>
-                  <Grid item xs={12} md={6}>
-                    <FormControl fullWidth size="small">
+                </Stack>
+                <Stack spacing={2} sx={{ mt: 1 }}>
+                  <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                    <TextField sx={{ flex: 1, minWidth: 240 }} size="small" label="Name" value={c.name} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, name: e.target.value}:x) }))} />
+                    <TextField sx={{ flex: 1, minWidth: 240 }} size="small" label="Next" value={c.nextClueId ?? ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, nextClueId: e.target.value || null}:x) }))} />
+                  </Box>
+                  <Accordion>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1-content"
+                      id="panel1-header"
+                    >
+                      <Typography component="span">Coordinates</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }} >
+                        <TextField sx={{ flex: 1, minWidth: 180 }} size="small" type="number" label="Lat" value={c.lat} error={c.lat < -90 || c.lat > 90} helperText={(c.lat < -90 || c.lat > 90) ? 'Lat must be between -90 and 90' : ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, lat: Number(e.target.value)}:x) }))} />
+                        <TextField sx={{ flex: 1, minWidth: 180 }} size="small" type="number" label="Lng" value={c.lng} error={c.lng < -180 || c.lng > 180} helperText={(c.lng < -180 || c.lng > 180) ? 'Lng must be between -180 and 180' : ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, lng: Number(e.target.value)}:x) }))} />
+                        <TextField sx={{ flex: 1, minWidth: 180 }} size="small" type="number" label="Radius (m)" value={c.radiusMeters} error={c.radiusMeters <= 0} helperText={c.radiusMeters <= 0 ? 'Radius must be > 0' : ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, radiusMeters: Number(e.target.value)}:x) }))} />
+                      </Box>
+                    </AccordionDetails>
+                  </Accordion>
+                  <TextField fullWidth size="small" label="Success Message" value={c.hint} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, hint: e.target.value}:x) }))} />
+                  <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                    <FormControl sx={{ flex: 1, minWidth: 240 }} size="small">
                       <InputLabel id={`vmode-${c.id}`}>Validation Mode</InputLabel>
                       <Select
                         labelId={`vmode-${c.id}`}
@@ -211,36 +228,36 @@ export default function AdminMUIPage() {
                         <MenuItem value="either">Either (photo OR answer)</MenuItem>
                       </Select>
                     </FormControl>
-                  </Grid2>
-                  <Grid item xs={12} md={6}>
-                    <TextField fullWidth size="small" label="Question" value={c.question || ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, question: e.target.value}:x) }))} />
-                  </Grid2>
-                  <Grid2 xs={12} md={6}>
-                    <TextField fullWidth size="small" label="Expected Answer" value={c.expectedAnswer || ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, expectedAnswer: e.target.value}:x) }))} />
-                  </Grid2>
-                  <Grid item xs={12}><Divider /></Grid>
-                  <Grid item xs={12} md={4}><TextField fullWidth size="small" label="Generic Hint 1" value={c.hints?.[0] || ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, hints: [e.target.value, x.hints?.[1] || '', x.hints?.[2] || '']}:x) }))} /></Grid>
-                  <Grid item xs={12} md={4}><TextField fullWidth size="small" label="Generic Hint 2" value={c.hints?.[1] || ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, hints: [x.hints?.[0] || '', e.target.value, x.hints?.[2] || '']}:x) }))} /></Grid>
-                  <Grid item xs={12} md={4}><TextField fullWidth size="small" label="Generic Hint 3" value={c.hints?.[2] || ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, hints: [x.hints?.[0] || '', x.hints?.[1] || '', e.target.value]}:x) }))} /></Grid>
-                  <Grid item xs={12} md={4}><TextField fullWidth size="small" label="Photo Hint 1" value={c.hintsPhoto?.[0] || ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, hintsPhoto: [e.target.value, x.hintsPhoto?.[1] || '', x.hintsPhoto?.[2] || '']}:x) }))} /></Grid>
-                  <Grid item xs={12} md={4}><TextField fullWidth size="small" label="Photo Hint 2" value={c.hintsPhoto?.[1] || ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, hintsPhoto: [x.hintsPhoto?.[0] || '', e.target.value, x.hintsPhoto?.[2] || '']}:x) }))} /></Grid>
-                  <Grid item xs={12} md={4}><TextField fullWidth size="small" label="Photo Hint 3" value={c.hintsPhoto?.[2] || ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, hintsPhoto: [x.hintsPhoto?.[0] || '', x.hintsPhoto?.[1] || '', e.target.value]}:x) }))} /></Grid>
-                  <Grid item xs={12} md={4}><TextField fullWidth size="small" label="Answer Hint 1" value={c.hintsAnswer?.[0] || ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, hintsAnswer: [e.target.value, x.hintsAnswer?.[1] || '', x.hintsAnswer?.[2] || '']}:x) }))} /></Grid>
-                  <Grid item xs={12} md={4}><TextField fullWidth size="small" label="Answer Hint 2" value={c.hintsAnswer?.[1] || ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, hintsAnswer: [x.hintsAnswer?.[0] || '', e.target.value, x.hintsAnswer?.[2] || '']}:x) }))} /></Grid>
-                  <Grid item xs={12} md={4}><TextField fullWidth size="small" label="Answer Hint 3" value={c.hintsAnswer?.[2] || ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, hintsAnswer: [x.hintsAnswer?.[0] || '', x.hintsAnswer?.[1] || '', e.target.value]}:x) }))} /></Grid>
-                  <Grid item xs={12}>
-                    <Stack direction="row" spacing={2} alignItems="center">
-                      {c.imagePath && <img src={`/${c.imagePath}`} alt="ref" style={{ maxHeight: 80, borderRadius: 6 }} />}
-                      <Button variant="outlined" component="label">Upload reference image
-                        <input hidden type="file" accept="image/*" onChange={e => e.target.files && uploadImage(c.id, e.target.files[0])} />
-                      </Button>
-                    </Stack>
-                  </Grid2>
-                </Grid2>
+                  </Box>
+                  <Divider>Q/A</Divider>
+                  <TextField sx={{ flex: 1, minWidth: 240 }} size="small" label="Question" value={c.question || ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, question: e.target.value}:x) }))} />
+                  <TextField fullWidth size="small" label="Expected Answer" value={c.expectedAnswer || ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, expectedAnswer: e.target.value}:x) }))} />
+                  <Divider>Hints</Divider>
+                  <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                    <TextField sx={{ flex: 1, minWidth: 200 }} size="small" label="Generic Hint 1" value={c.hints?.[0] || ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, hints: [e.target.value, x.hints?.[1] || '', x.hints?.[2] || '']}:x) }))} />
+                    <TextField sx={{ flex: 1, minWidth: 200 }} size="small" label="Generic Hint 2" value={c.hints?.[1] || ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, hints: [x.hints?.[0] || '', e.target.value, x.hints?.[2] || '']}:x) }))} />
+                    <TextField sx={{ flex: 1, minWidth: 200 }} size="small" label="Generic Hint 3" value={c.hints?.[2] || ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, hints: [x.hints?.[0] || '', x.hints?.[1] || '', e.target.value]}:x) }))} />
+                  </Box>
+                  <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                    <TextField sx={{ flex: 1, minWidth: 200 }} size="small" label="Photo Hint 1" value={c.hintsPhoto?.[0] || ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, hintsPhoto: [e.target.value, x.hintsPhoto?.[1] || '', x.hintsPhoto?.[2] || '']}:x) }))} />
+                    <TextField sx={{ flex: 1, minWidth: 200 }} size="small" label="Photo Hint 2" value={c.hintsPhoto?.[1] || ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, hintsPhoto: [x.hintsPhoto?.[0] || '', e.target.value, x.hintsPhoto?.[2] || '']}:x) }))} />
+                    <TextField sx={{ flex: 1, minWidth: 200 }} size="small" label="Photo Hint 3" value={c.hintsPhoto?.[2] || ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, hintsPhoto: [x.hintsPhoto?.[0] || '', x.hintsPhoto?.[1] || '', e.target.value]}:x) }))} />
+                  </Box>
+                  <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                    <TextField sx={{ flex: 1, minWidth: 200 }} size="small" label="Answer Hint 1" value={c.hintsAnswer?.[0] || ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, hintsAnswer: [e.target.value, x.hintsAnswer?.[1] || '', x.hintsAnswer?.[2] || '']}:x) }))} />
+                    <TextField sx={{ flex: 1, minWidth: 200 }} size="small" label="Answer Hint 2" value={c.hintsAnswer?.[1] || ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, hintsAnswer: [x.hintsAnswer?.[0] || '', e.target.value, x.hintsAnswer?.[2] || '']}:x) }))} />
+                    <TextField sx={{ flex: 1, minWidth: 200 }} size="small" label="Answer Hint 3" value={c.hintsAnswer?.[2] || ''} onChange={e => setCfg(cfg => cfg && ({ ...cfg, clues: cfg.clues.map(x => x.id===c.id?{...x, hintsAnswer: [x.hintsAnswer?.[0] || '', x.hintsAnswer?.[1] || '', e.target.value]}:x) }))} />
+                  </Box>
+                  <Stack direction="row" spacing={2} alignItems="center">
+                    {c.imagePath && <img src={`/${c.imagePath}`} alt="ref" style={{ maxHeight: 80, borderRadius: 6 }} />}
+                    <Button variant="outlined" component="label">Upload reference image
+                      <input hidden type="file" accept="image/*" onChange={e => e.target.files && uploadImage(c.id, e.target.files[0])} />
+                    </Button>
+                  </Stack>
+                </Stack>
               </Paper>
-              </Grid2>
             ))}
-          </Grid2>
+          </Stack>
 
           <Dialog fullWidth maxWidth="md" open={!!mapClueId} onClose={() => setMapClueId(null)}>
             <DialogTitle>Edit location: {mapClueId || ''}</DialogTitle>
@@ -282,20 +299,20 @@ export default function AdminMUIPage() {
       )}
 
       {tab === 'tips' && (
-          <Grid container spacing={2} sx={{ mt: 2 }}>
-          <Grid item xs={12} md={6}>
+        <Box sx={{ mt: 2, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+          <Box sx={{ flex: 1, minWidth: 320 }}>
             <Paper sx={{ p: 2 }}>
               <Typography variant="subtitle1">Wrong Image Tips</Typography>
               <ListEditor items={cfg.wrongImageTips || []} onChange={items => saveTips({ wrongImageTips: items })} />
             </Paper>
-          </Grid2>
-          <Grid item xs={12} md={6}>
+          </Box>
+          <Box sx={{ flex: 1, minWidth: 320 }}>
             <Paper sx={{ p: 2 }}>
               <Typography variant="subtitle1">Wrong Answer Tips</Typography>
               <ListEditor items={cfg.wrongAnswerTips || []} onChange={items => saveTips({ wrongAnswerTips: items })} />
             </Paper>
-          </Grid2>
-        </Grid2>
+          </Box>
+        </Box>
       )}
 
       {tab === 'map' && (
